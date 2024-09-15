@@ -53,7 +53,7 @@ fn main() {
 }
 ```
 
-Also, `index_weiaghts` supports `&[f32]`, like:
+Also, `index_weights` supports `&[f32]`, like:
 
 ```rust
 use rand;
