@@ -3,6 +3,7 @@
 use crate::table::WalkerTable;
 use crate::util::math::gcd_for_slice;
 
+#[allow(clippy::new_ret_no_self)]
 pub trait NewBuilder<T> {
     /// Creates a new instance of [`WalkerTableBuilder`] from
     /// [`&[u32]`] or [`&[f32]`].
@@ -18,11 +19,9 @@ pub trait NewBuilder<T> {
 /// ```rust
 /// use weighted_rand::builder::*;
 ///
-/// fn main() {
-///     let index_weights = [1, 2, 3, 4];
-///     let builder = WalkerTableBuilder::new(&index_weights);
-///     let wa_table = builder.build();
-/// }
+/// let index_weights = [1, 2, 3, 4];
+/// let builder = WalkerTableBuilder::new(&index_weights);
+/// let wa_table = builder.build();
 /// ```
 ///
 /// Also, `index_weiaghts` supports [`&[f32]`], like `[0.1, 0.2, 0.3, 0.4]`
@@ -88,7 +87,7 @@ impl WalkerTableBuilder {
 
     /// Calculates the sum of `index_weights`.
     fn sum(&self) -> u32 {
-        self.index_weights.iter().fold(0, |acc, cur| acc + cur)
+        self.index_weights.iter().sum::<u32>()
     }
 
     /// Calculates the mean of `index_weights`.
@@ -104,24 +103,19 @@ impl WalkerTableBuilder {
 
         let mut aliases = vec![0; table_len];
         let mut probs = vec![0.0; table_len];
-        loop {
-            match below_vec.pop() {
-                Some(below) => {
-                    if let Some(above) = above_vec.pop() {
-                        let diff = mean - below.1;
-                        aliases[below.0] = above.0 as usize;
-                        probs[below.0] = diff as f32 / mean as f32;
-                        if above.1 - diff <= mean {
-                            below_vec.push((above.0, above.1 - diff));
-                        } else {
-                            above_vec.push((above.0, above.1 - diff));
-                        }
-                    } else {
-                        aliases[below.0] = below.0 as usize;
-                        probs[below.0] = below.1 as f32 / mean as f32;
-                    }
+        while let Some(below) = below_vec.pop() {
+            if let Some(above) = above_vec.pop() {
+                let diff = mean - below.1;
+                aliases[below.0] = above.0;
+                probs[below.0] = diff as f32 / mean as f32;
+                if above.1 - diff <= mean {
+                    below_vec.push((above.0, above.1 - diff));
+                } else {
+                    above_vec.push((above.0, above.1 - diff));
                 }
-                None => break,
+            } else {
+                aliases[below.0] = below.0;
+                probs[below.0] = below.1 as f32 / mean as f32;
             }
         }
 
@@ -131,6 +125,7 @@ impl WalkerTableBuilder {
     /// Divide the values of `index_weights` based on the mean of them.
     ///
     /// The tail value is a weight and head is its index.
+    #[allow(clippy::type_complexity)]
     fn separate_weight(&self) -> (Vec<(usize, u32)>, Vec<(usize, u32)>) {
         let mut below_vec = Vec::with_capacity(self.index_weights.len());
         let mut above_vec = Vec::with_capacity(self.index_weights.len());
@@ -151,6 +146,7 @@ mod builder_test {
     use crate::table::WalkerTable;
 
     #[test]
+    #[allow(clippy::excessive_precision)]
     fn make_table_from_u32() {
         let index_weights = [2, 7, 9, 2, 4, 8, 1, 3, 6, 5];
         let builder = WalkerTableBuilder::new(&index_weights);
@@ -176,6 +172,7 @@ mod builder_test {
     }
 
     #[test]
+    #[allow(clippy::excessive_precision)]
     fn make_table_from_f32() {
         let index_weights = [0.1, 0.2, 0.3, -0.4];
         let builder = WalkerTableBuilder::new(&index_weights);

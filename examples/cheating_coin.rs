@@ -1,4 +1,3 @@
-use rand;
 use weighted_rand::builder::*;
 
 fn main() {
@@ -13,7 +12,7 @@ fn main() {
     // loops, we recommend using the next_rng method with an
     // external ThreadRng instance.
     let mut result = [""; 10000];
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
     for r in &mut result {
         let j = wa_table.next_rng(&mut rng);
         *r = cheating_coin[j];

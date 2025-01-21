@@ -21,22 +21,20 @@
 //! ```rust
 //! use weighted_rand::builder::*;
 //!
-//! fn main() {
-//!     let fruit = ["Apple", "Banana", "Orange", "Peach"];
+//! let fruit = ["Apple", "Banana", "Orange", "Peach"];
 //!
-//!     // Define the weights for each index corresponding
-//!     // to the above list.
-//!     // In the following case, the ratio of each weight
-//!     // is "2 : 1 : 7 : 0", and the output probabilities
-//!     // for each index are 0.2, 0.1, 0.7 and 0.
-//!     let index_weights = [2, 1, 7, 0];
+//! // Define the weights for each index corresponding
+//! // to the above list.
+//! // In the following case, the ratio of each weight
+//! // is "2 : 1 : 7 : 0", and the output probabilities
+//! // for each index are 0.2, 0.1, 0.7 and 0.
+//! let index_weights = [2, 1, 7, 0];
 //!
-//!     let builder = WalkerTableBuilder::new(&index_weights);
-//!     let wa_table = builder.build();
+//! let builder = WalkerTableBuilder::new(&index_weights);
+//! let wa_table = builder.build();
 //!
-//!     for i in (0..10).map(|_| wa_table.next()) {
-//!         println!("{}", fruit[i]);
-//!     }
+//! for i in (0..10).map(|_| wa_table.next()) {
+//!     println!("{}", fruit[i]);
 //! }
 //! ```
 //!
@@ -46,26 +44,24 @@
 //! use rand;
 //! use weighted_rand::builder::*;
 //!
-//! fn main() {
-//!     // Coin with a 5% higher probability of heads than tails
-//!     let cheating_coin = ["Heads!", "Tails!"];
-//!     let index_weights = [0.55, 0.45];
+//! // Coin with a 5% higher probability of heads than tails
+//! let cheating_coin = ["Heads!", "Tails!"];
+//! let index_weights = [0.55, 0.45];
 //!
-//!     let builder = WalkerTableBuilder::new(&index_weights);
-//!     let wa_table = builder.build();
+//! let builder = WalkerTableBuilder::new(&index_weights);
+//! let wa_table = builder.build();
 //!
-//!     // If you want to process something in a large number of
-//!     // loops, we recommend using the next_rng method with an
-//!     // external ThreadRng instance.
-//!     let mut result = [""; 10000];
-//!     let mut rng = rand::thread_rng();
-//!     for r in &mut result {
-//!         let j = wa_table.next_rng(&mut rng);
-//!         *r = cheating_coin[j];
-//!     }
-//!
-//!     // println!("{:?}", result);
+//! // If you want to process something in a large number of
+//! // loops, we recommend using the next_rng method with an
+//! // external ThreadRng instance.
+//! let mut result = [""; 10000];
+//! let mut rng = rand::thread_rng();
+//! for r in &mut result {
+//!     let j = wa_table.next_rng(&mut rng);
+//!     *r = cheating_coin[j];
 //! }
+//!
+//! // println!("{:?}", result);
 //! ```
 //!
 

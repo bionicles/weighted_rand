@@ -1,4 +1,4 @@
-use rand::prelude::*;
+use rand::{rngs::ThreadRng, Rng};
 use weighted_rand::builder::*;
 
 use criterion::Criterion;
@@ -31,7 +31,7 @@ fn bench_generate_by_wam_next_rng(c: &mut Criterion) {
     let builder = WalkerTableBuilder::new(&WEIGHTS);
     let table = builder.build();
 
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
 
     let mut result = [0; 100_000];
 
@@ -50,8 +50,8 @@ fn bench_generate_by_csm(c: &mut Criterion) {
         .collect::<Vec<f32>>()
         .to_vec();
 
-    let csm = CSM { probs: &probs };
-    let mut rng = rand::thread_rng();
+    let csm = CumulativeSumMethod { probs: &probs };
+    let mut rng = rand::rng();
     let mut result = [0; 100_000];
 
     c.bench_function("generate_by_csm", |b| {
@@ -76,13 +76,13 @@ criterion_main!(benches);
 
 // Weighted random sampling using Cumulative Sum Method
 
-struct CSM<'a> {
+struct CumulativeSumMethod<'a> {
     probs: &'a [f32],
 }
 
-impl CSM<'_> {
+impl CumulativeSumMethod<'_> {
     fn next(&self, rng: &mut ThreadRng) -> usize {
-        let r = rng.gen::<f32>();
+        let r = rng.random::<f32>();
         for (i, p) in self.probs.iter().enumerate() {
             if r <= *p {
                 return i;

@@ -28,22 +28,19 @@ pub struct WalkerTable {
 impl WalkerTable {
     /// Creates a new instance of [`WalkerTable`].
     pub fn new(aliases: Vec<usize>, probs: Vec<f32>) -> WalkerTable {
-        WalkerTable {
-            aliases: aliases,
-            probs: probs,
-        }
+        WalkerTable { aliases, probs }
     }
 
     /// Returns an index at random.
     pub fn next(&self) -> usize {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         self.next_rng(&mut rng)
     }
 
     /// Returns an index at random using an external RNG which implements Rng.
     pub fn next_rng(&self, rng: &mut impl Rng) -> usize {
-        let i = rng.gen_range(0..self.probs.len());
-        let r = rng.gen::<f32>();
+        let i = rng.random_range(0..self.probs.len());
+        let r = rng.random::<f32>();
         if r < self.probs[i] {
             return self.aliases[i];
         }
@@ -70,7 +67,7 @@ mod table_test {
         let builder = WalkerTableBuilder::new(&index_weights);
         let wa_table = builder.build();
 
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
 
         let idxs = (0..N)
             .map(|_| wa_table.next_rng(&mut rng))
